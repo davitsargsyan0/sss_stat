@@ -10,7 +10,7 @@ def load_data():
     print(df)
     return df
 
-st.title("🎟️ Live Auditorium Attendance")
+st.title("🎟️ brr Live Auditorium Attendance")
 
 df = load_data()
 
