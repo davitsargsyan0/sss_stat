@@ -1,0 +1,11 @@
+credentials:
+  usernames:
+    sss_user:
+      email: sss@user.com
+      name: SSS Team
+      password: '$2b$12$M/zeqKZ7eFQGke70ySBxkeidKrR9rxf5ot8F4ooB3CkRdkXFtP5ue'
+
+cookie:
+  name: streamlit_auth
+  key: some_random_secret_key   # use any random string
+  expiry_days: 1
