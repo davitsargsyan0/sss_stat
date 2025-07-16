@@ -5,10 +5,7 @@ import hashlib
 
 st.set_page_config(layout="wide")
 
-# =======================
 # 1. AUTHENTICATION LAYER
-# =======================
-
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
@@ -35,26 +32,23 @@ def login_page():
             else:
                 st.error("Invalid username or password")
 
-# ================
 # 2. DASHBOARD APP
-# ================
-
 def attendance_dashboard():
     st.title("🎪 Sevan Startup Summit – Live Festival City Map")
 
-    # --- Replace with your actual Google Sheets published CSV link! ---
+    # Google Sheets published CSV link (replace # with your link)
     SHEET_URL_OCCUPANCY = "#"  # e.g., "https://docs.google.com/spreadsheets/d/your_sheet_id/export?format=csv"
 
-    # --- Fallback to sample data if not yet linked ---
+    # Sample data structure, includes Open Aud 7 and Open Aud 8
     @st.cache_data(ttl=60)
     def load_data():
         if SHEET_URL_OCCUPANCY.startswith("http"):
             df = pd.read_csv(SHEET_URL_OCCUPANCY)
         else:
-            # Sample data structure, will be replaced by live data
             data = [
                 {"zone_name": "Open-sky Aud", "attendance": 80, "session_title": "Panel 1", "speaker": "A. Mirzoyan", "rating": 4.5, "feedback": "Nice", "last_updated": "2025-07-16 12:00"},
-                {"zone_name": "Mentorship", "attendance": 60, "session_title": "Mentor Time", "speaker": "S. Hakobyan", "rating": 4.8, "feedback": "Crowded", "last_updated": "2025-07-16 12:00"},
+                {"zone_name": "Open Aud 7", "attendance": 52, "session_title": "Deep Tech", "speaker": "L. Arakelyan", "rating": 4.7, "feedback": "Packed", "last_updated": "2025-07-16 12:00"},
+                {"zone_name": "Open Aud 8", "attendance": 44, "session_title": "Startup Q&A", "speaker": "K. Sargsyan", "rating": 4.2, "feedback": "Interesting", "last_updated": "2025-07-16 12:00"},
                 {"zone_name": "Big Open Auditorium", "attendance": 120, "session_title": "Keynote", "speaker": "M. Khorasani", "rating": 4.9, "feedback": "Full", "last_updated": "2025-07-16 12:00"},
                 {"zone_name": "Lake Side Hall", "attendance": 25, "session_title": "Fireside", "speaker": "N. Safaryan", "rating": 4.0, "feedback": "", "last_updated": "2025-07-16 12:00"},
                 {"zone_name": "Open Aud 6", "attendance": 10, "session_title": "Workshop A", "speaker": "", "rating": 0, "feedback": "", "last_updated": "2025-07-16 12:00"},
@@ -72,13 +66,13 @@ def attendance_dashboard():
 
     df = load_data()
 
-    # --- Camp Fire Logic ---
+    # Camp Fire Logic
     now = datetime.datetime.now()
-    show_fire = (now.hour == 12)  # Fire between 20:00 and 21:00
+    show_fire = (now.hour == 20)  # Fire between 20:00 and 21:00
     campfire_emoji = "🔥" if show_fire else "🪵"
     campfire_caption = "Camp Fire is 🔥 on!" if show_fire else "Camp Fire is off until 20:00"
 
-    # --- CSS for Interactivity ---
+    # CSS for Interactivity
     st.markdown("""
     <style>
     .zoneblock:hover {
@@ -94,11 +88,11 @@ def attendance_dashboard():
 
     def zone_color(attendance):
         if attendance < 30:
-            return "#A0A0A0"  # gray
+            return "#A0A0A0"
         elif attendance <= 80:
-            return "#FFEB3B"  # yellow
+            return "#FFEB3B"
         else:
-            return "#7B68EE"  # purple
+            return "#7B68EE"
 
     def glow_css(color):
         return f"0 0 20px 4px {color}55"
@@ -126,7 +120,7 @@ def attendance_dashboard():
         st.markdown(html, unsafe_allow_html=True)
 
     st.markdown("---")
-    cols = st.columns([1.5, 1, 1, 1, 1, 1, 1.5])
+    cols = st.columns([1.2, 1, 1, 1, 1, 1, 1, 1.2])  # 8 blocks in first row
     with cols[0]:
         st.markdown(f"""
             <div style="background:#222;border-radius:50px;padding:30px;text-align:center;font-size:2.2em;border:4px solid #7B68EE;box-shadow:0 0 18px #f90;">
@@ -135,11 +129,12 @@ def attendance_dashboard():
             <div style="text-align:center;font-size:0.9em;margin-top:5px;color:#555;">Big Camp Fire<br><span style="font-size:0.8em">{campfire_caption}</span></div>
         """, unsafe_allow_html=True)
     with cols[1]: zone_button("Open-sky Aud", int(df.loc[df.zone_name=="Open-sky Aud","attendance"].values[0]))
-    with cols[2]: zone_button("Mentorship", int(df.loc[df.zone_name=="Mentorship","attendance"].values[0]))
-    with cols[3]: zone_button("Big Open Auditorium", int(df.loc[df.zone_name=="Big Open Auditorium","attendance"].values[0]))
-    with cols[4]: zone_button("Lake Side Hall", int(df.loc[df.zone_name=="Lake Side Hall","attendance"].values[0]))
-    with cols[5]: zone_button("Big Hall", int(df.loc[df.zone_name=="Big Hall","attendance"].values[0]))
-    with cols[6]: zone_button("Vision Hall", int(df.loc[df.zone_name=="Vision Hall","attendance"].values[0]))
+    with cols[2]: zone_button("Open Aud 7", int(df.loc[df.zone_name=="Open Aud 7","attendance"].values[0]))
+    with cols[3]: zone_button("Open Aud 8", int(df.loc[df.zone_name=="Open Aud 8","attendance"].values[0]))
+    with cols[4]: zone_button("Big Open Auditorium", int(df.loc[df.zone_name=="Big Open Auditorium","attendance"].values[0]))
+    with cols[5]: zone_button("Lake Side Hall", int(df.loc[df.zone_name=="Lake Side Hall","attendance"].values[0]))
+    with cols[6]: zone_button("Big Hall", int(df.loc[df.zone_name=="Big Hall","attendance"].values[0]))
+    with cols[7]: zone_button("Vision Hall", int(df.loc[df.zone_name=="Vision Hall","attendance"].values[0]))
 
     cols2 = st.columns(6)
     with cols2[0]: zone_button("Open Aud 6", int(df.loc[df.zone_name=="Open Aud 6","attendance"].values[0]))
@@ -176,10 +171,7 @@ def attendance_dashboard():
         st.session_state.pop('username', None)
         st.rerun()
 
-# =================
 # 3. MAIN CONTROL
-# =================
-
 def main():
     if 'logged_in' not in st.session_state:
         st.session_state['logged_in'] = False
